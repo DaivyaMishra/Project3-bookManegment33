@@ -21,7 +21,7 @@ const isValidRequestBody = function (request) {
 const isvalidTitle = function (title) {
   return ["Mr", "Mrs", "Miss"].indexOf(title) !== -1;
 };
-const createUserAPIs = async function (req, res) {
+const createUser = async function (req, res) {
   try {
     const data = req.body;
     let { title, name, phone, email, password, address } = userData;
@@ -191,4 +191,4 @@ const loginUser = async function (req, res) {
     res.status(500).send({ status: false, msg: err.message });
   }
 };
-module.exports = { createUserAPIs, loginUser };
+module.exports = { createUser, loginUser };

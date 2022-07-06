@@ -8,7 +8,7 @@ const middleware = require("../middle/midfile");
 
 
 
-router.post("/register", UserAPIs.createUserAPIs);
+router.post("/register", UserAPIs.createUser);
 router.post("/login", UserAPIs.loginUser);
 router.post("/books", middleware.authentication, BookAPIs.createBook);
 router.get("/books", middleware.authentication, BookAPIs.getbooks);
