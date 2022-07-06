@@ -9,4 +9,7 @@ router.get("/test-me", function (req, res) {
   res.send("My server is running");
 });
 
+router.post("/register", UserAPIs.createUserAPIs)
+router.post("/login", UserAPIs.loginUser)
+
 module.exports = router;
