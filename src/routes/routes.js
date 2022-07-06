@@ -4,11 +4,15 @@ const router = express.Router();
 const UserAPIs = require("../controller/UserAPIs");
 const BookAPIs = require("../controller/BookAPIs");
 const ReviewAPIs = require("../controller/ReviewAPIs");
+const middleware = require("../middle/midfile");
 
-router.get("/test-me", function (req, res) {
-  res.send("My server is running");
-});
+// router.get("/test-me", function (req, res) {
+//   res.send("My server is running");
+// });
 
-router.post("/books",BookAPIs.createBook)
+router.post("/register", UserAPIs.createUserAPIs);
+router.post("/login", UserAPIs.loginUser);
+router.post("/books", middleware.authentication, BookAPIs.createBook);
+router.get("/books", middleware.authentication, BookAPIs.getbooks);
 
 module.exports = router;
