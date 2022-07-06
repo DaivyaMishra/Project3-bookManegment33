@@ -121,7 +121,7 @@ let getbooks = async function (req, res) {
     let { userId, category, subcategory } = data;
     let filter = { isDeleted: false };
 
-    if (!isValid && isValidRequestBody(userId)) {
+    if (!isValid(userId) && isValidRequestBody(userId)) {
       filter["userId"] = userId;
     }
     if (isValid(category)) {
@@ -142,7 +142,7 @@ let getbooks = async function (req, res) {
         reviews: 1,
       })
       .sort({ title: 1 });
-    if (books && data.length === 0)
+    if (books && books.length === 0)
       return res
         .status(404)
         .send({ status: false, msg: "No such exist or is deleted" });

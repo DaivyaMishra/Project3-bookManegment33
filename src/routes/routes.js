@@ -6,9 +6,7 @@ const BookAPIs = require("../controller/BookAPIs");
 const ReviewAPIs = require("../controller/ReviewAPIs");
 const middleware = require("../middle/midfile");
 
-// router.get("/test-me", function (req, res) {
-//   res.send("My server is running");
-// });
+
 
 router.post("/register", UserAPIs.createUserAPIs);
 router.post("/login", UserAPIs.loginUser);
