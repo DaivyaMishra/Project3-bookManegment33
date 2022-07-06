@@ -9,4 +9,6 @@ router.get("/test-me", function (req, res) {
   res.send("My server is running");
 });
 
+router.post("/books",BookAPIs.createBook)
+
 module.exports = router;

@@ -5,7 +5,7 @@ const UserSchema= new mongoose.Schema({
     title: {
         type:String, 
         required:[true,"title is required"],
-        enum:[Mr, Mrs, Miss],
+        enum:["Mr", "Mrs", "Miss"],
         trim: true,
     },
   name: {
@@ -40,4 +40,4 @@ const UserSchema= new mongoose.Schema({
   },
 },{timestamps:true}
 )
-module.exports=mongoose.module("Users",UserSchema)
+module.exports=mongoose.model("Users",UserSchema)
