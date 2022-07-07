@@ -124,7 +124,7 @@ const createUser = async function (req, res) {
     let newUser = await UserModel.create(userData);
     return res
       .status(201)
-      .send({ status: true, msg: "succesfully run", data: newUser });
+      .send({ status: true, msg: "succesfully run", userdata: newUser });
   } catch (err) {
     res.status(500).send({ status: false, msg: err.message });
   }
@@ -136,12 +136,10 @@ const loginUser = async function (req, res) {
     const { email, password } = loginData;
 
     if (!isValidRequestBody(loginData)) {
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message: "Invalid request, please enter your email and password",
-        });
+      return res.status(400).send({
+        status: false,
+        message: "Invalid request, please enter your email and password",
+      });
     }
 
     if (!isValid(email))
@@ -178,54 +176,4 @@ const loginUser = async function (req, res) {
     res.status(500).send({ status: false, msg: err.message });
   }
 };
-
-// const loginUser = async function (req, res) {
-//   try {
-//     const loginData = req.body;
-//     const { email, password } = loginData;
-
-//     if (!isValidRequestBody(loginData)) {
-//       return res
-//         .status(400)
-//         .send({ status: false, message: "Invalid req, please login details" });
-//     }
-
-//     if (!isValid(email))
-//       return res
-//         .status(400)
-//         .send({ status: false, message: "Email id require" });
-
-//     if (!emailRegex.test(email)) {
-//       return res.status(400).send({
-//         status: false,
-//         message: "Email should be a valid e-mail address",
-//       });
-//     }
-//     if (!isValid(password)) {
-//       return res
-//         .status(400)
-//         .send({ status: false, message: "password must be present" });
-//     }
-
-//     const user = await UserModel.findOne({ email: email, password: password });
-
-//     if (!user) {
-//       return res.status(401).send({ status: false, msg: "Invalid login" });
-//     }
-//     let token = jwt.sign(
-//       {
-//         userId: user._id.toString(),
-//         iat: Math.floor(Date.now() / 1000),
-//         exp: Math.floor(Date.now() / 1000) + 10 * 60 * 60,
-//       },
-//       "Group33-book/Management"
-//     );
-//     res.setHeader("x-api-key", token);
-//     res
-//       .status(200)
-//       .send({ status: true, msg: "User successfully", data: token });
-//   } catch (err) {
-//     res.status(500).send({ status: false, msg: err.message });
-//   }
-// };
 module.exports = { createUser, loginUser };
