@@ -4,8 +4,9 @@ const jwt = require("jsonwebtoken");
 const nameRegex = /^[a-zA-Z ]{2,45}$/;
 const emailRegex = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/;
 const mobileRegex = /^[6-9]\d{9}$/;
-const passwordRegex =
-  /^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%?&]{8,15}$/;
+const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,15}$/;
+
+///^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%?&]{8,15}$/;
 const pincodeRegex = /^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/;
 
 const isValid = function (value) {
@@ -15,7 +16,7 @@ const isValid = function (value) {
 };
 
 const isValidRequestBody = function (request) {
-  return Object.keys(request) > 0;
+  return Object.keys(request).length > 0;
 };
 
 const isvalidTitle = function (title) {
@@ -137,20 +138,17 @@ const loginUser = async function (req, res) {
     if (!isValidRequestBody(loginData)) {
       return res
         .status(400)
-        .send({ status: false, message: "Invalid req, please login details" });
+        .send({
+          status: false,
+          message: "Invalid request, please enter your email and password",
+        });
     }
 
     if (!isValid(email))
       return res
         .status(400)
-        .send({ status: false, message: "Email id require" });
+        .send({ status: false, message: "Email id required" });
 
-    if (!emailRegex.test(email)) {
-      return res.status(400).send({
-        status: false,
-        message: "Email should be a valid e-mail address",
-      });
-    }
     if (!isValid(password)) {
       return res
         .status(400)
@@ -160,11 +158,13 @@ const loginUser = async function (req, res) {
     const user = await UserModel.findOne({ email: email, password: password });
 
     if (!user) {
-      return res.status(401).send({ status: false, msg: "Invalid login" });
+      return res
+        .status(401)
+        .send({ status: false, msg: "Invalid credentials" });
     }
     let token = jwt.sign(
       {
-        userId: isValid._id.toString(),
+        userId: user._id.toString(),
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor(Date.now() / 1000) + 10 * 60 * 60,
       },
@@ -173,9 +173,59 @@ const loginUser = async function (req, res) {
     res.setHeader("x-api-key", token);
     res
       .status(200)
-      .send({ status: true, msg: "User successfully", data: token });
+      .send({ status: true, msg: "User successfully logged In", data: token });
   } catch (err) {
     res.status(500).send({ status: false, msg: err.message });
   }
 };
+
+// const loginUser = async function (req, res) {
+//   try {
+//     const loginData = req.body;
+//     const { email, password } = loginData;
+
+//     if (!isValidRequestBody(loginData)) {
+//       return res
+//         .status(400)
+//         .send({ status: false, message: "Invalid req, please login details" });
+//     }
+
+//     if (!isValid(email))
+//       return res
+//         .status(400)
+//         .send({ status: false, message: "Email id require" });
+
+//     if (!emailRegex.test(email)) {
+//       return res.status(400).send({
+//         status: false,
+//         message: "Email should be a valid e-mail address",
+//       });
+//     }
+//     if (!isValid(password)) {
+//       return res
+//         .status(400)
+//         .send({ status: false, message: "password must be present" });
+//     }
+
+//     const user = await UserModel.findOne({ email: email, password: password });
+
+//     if (!user) {
+//       return res.status(401).send({ status: false, msg: "Invalid login" });
+//     }
+//     let token = jwt.sign(
+//       {
+//         userId: user._id.toString(),
+//         iat: Math.floor(Date.now() / 1000),
+//         exp: Math.floor(Date.now() / 1000) + 10 * 60 * 60,
+//       },
+//       "Group33-book/Management"
+//     );
+//     res.setHeader("x-api-key", token);
+//     res
+//       .status(200)
+//       .send({ status: true, msg: "User successfully", data: token });
+//   } catch (err) {
+//     res.status(500).send({ status: false, msg: err.message });
+//   }
+// };
 module.exports = { createUser, loginUser };

@@ -22,18 +22,20 @@ const ISBNRegex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/;
 const createBook = async function (req, res) {
   try {
     let bookData = req.body;
-    let { title, excrept, userId, ISBN, category, subcategory } = bookData;
+    let { title, excerpt, userId, ISBN, category, subcategory, releasedAt } =
+      bookData;
 
+    console.log("hw");
     //************Validation***********/
     if (!isValidRequestBody(bookData))
       return res.status(400).send({ status: false, message: "No input user" });
-
+    console.log("hw.");
     if (!isvalid(title))
       return res
         .status(400)
         .send({ status: false, message: "Title is required" });
 
-    if (!isvalid(expcerpt))
+    if (!isvalid(excerpt))
       return res
         .status(400)
         .send({ status: false, message: "Excerpt is required" });
@@ -100,7 +102,7 @@ const createBook = async function (req, res) {
       ISBN: ISBN,
       category: category,
       subcategory: subcategory,
-      releasedAt: date,
+      releasedAt: date.now(),
     };
     let newBook = await BookModel.create(newBookData);
     return res.status(201).send({
