@@ -13,4 +13,7 @@ router.get("/books", BookAPIs.getbooks);
 router.get("/books/bookid", BookAPIs.getBooksRevies);
 router.put("/books/bookid", BookAPIs.updateBooks);
 router.delete("/books/bookId", BookAPIs.deleteBook);
+router.post("/books/bookid/review", ReviewAPIs.createRview);
+//router.post("/books/bookId/reviwls",ReviewAPIs)
+//router.delete("/books/bookId/review",ReviewAPIs)
 module.exports = router;
