@@ -15,7 +15,7 @@ const isValid = function (value) {
 };
 
 const isValidRequestBody = function (request) {
-  return object.keys(request) > 0;
+  return Object.keys(request) > 0;
 };
 
 const isvalidTitle = function (title) {
@@ -23,7 +23,7 @@ const isvalidTitle = function (title) {
 };
 const createUser = async function (req, res) {
   try {
-    const data = req.body;
+    const userData = req.body;
     let { title, name, phone, email, password, address } = userData;
 
     //********************* Validation *****************/
@@ -86,50 +86,39 @@ const createUser = async function (req, res) {
       return res.status(400).send({ status: false, message: "Not valid Name" });
     }
     if (!emailRegex.test(email)) {
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message: "please provide  a valid email Address.",
-        });
+      return res.status(400).send({
+        status: false,
+        message: "please provide  a valid email Address.",
+      });
     }
     if (!mobileRegex.test(phone)) {
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message:
-            "please provide  a valid 10 digits phone number starts shoud be 6-9.",
-        });
+      return res.status(400).send({
+        status: false,
+        message:
+          "please provide  a valid 10 digits phone number starts shoud be 6-9.",
+      });
     }
     if (!passwordRegex.test(password)) {
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message:
-            "please provide  a strong  enough.please provide a password of Min length of 8 char and Uppercase",
-        });
+      return res.status(400).send({
+        status: false,
+        message:
+          "please provide  a strong  enough.please provide a password of Min length of 8 char and Uppercase",
+      });
     }
 
     const duplicateEmail = await UserModel.findOne({ email });
     if (duplicateEmail)
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message:
-            "Email address alerady exists . plz use another email address",
-        });
+      return res.status(400).send({
+        status: false,
+        message: "Email address alerady exists . plz use another email address",
+      });
 
     const duplicatephone = await UserModel.findOne({ phone });
     if (duplicatephone)
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message: "phone number alerady exists . plz use another phone number",
-        });
+      return res.status(400).send({
+        status: false,
+        message: "phone number alerady exists . plz use another phone number",
+      });
 
     let newUser = await UserModel.create(userData);
     return res
@@ -157,12 +146,10 @@ const loginUser = async function (req, res) {
         .send({ status: false, message: "Email id require" });
 
     if (!emailRegex.test(email)) {
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message: "Email should be a valid e-mail address",
-        });
+      return res.status(400).send({
+        status: false,
+        message: "Email should be a valid e-mail address",
+      });
     }
     if (!isValid(password)) {
       return res
