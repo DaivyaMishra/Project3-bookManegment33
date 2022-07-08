@@ -161,7 +161,7 @@ const getbooks = async function (req, res) {
 
     return res.status(200).send({
       status: true,
-      msg: "Book list accessed successfully",
+      msg: "Book list",
       data: books,
     });
   } catch (err) {
@@ -173,7 +173,7 @@ const getbooks = async function (req, res) {
 
 const getBooksRevies = async function (req, res) {
   try {
-    const bookId = res.params.bookId;
+    const bookId = req.params.bookId;
     if (!isValidRequestBody(bookId))
       return res
         .status(400)

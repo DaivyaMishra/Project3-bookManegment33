@@ -10,10 +10,10 @@ router.post("/register", UserAPIs.createUser);
 router.post("/login", UserAPIs.loginUser);
 router.post("/books", BookAPIs.createBook);
 router.get("/books", BookAPIs.getbooks);
-router.get("/books/bookid", BookAPIs.getBooksRevies);
-router.put("/books/bookid", BookAPIs.updateBooks);
-router.delete("/books/bookId", BookAPIs.deleteBook);
-router.post("/books/bookid/review", ReviewAPIs.createRview);
-//router.post("/books/bookId/reviwls",ReviewAPIs)
+router.get("/books/:bookId", BookAPIs.getBooksRevies);
+router.put("/books/:bookId", BookAPIs.updateBooks);
+router.delete("/books/:bookId", BookAPIs.deleteBook);
+router.post("/books/:bookId/review", ReviewAPIs.createRview);
+//router.put("/books/bookId/",ReviewAPIs.)
 //router.delete("/books/bookId/review",ReviewAPIs)
 module.exports = router;
