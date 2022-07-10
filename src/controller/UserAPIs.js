@@ -22,6 +22,7 @@ const isValidRequestBody = function (request) {
 const isvalidTitle = function (title) {
   return ["Mr", "Mrs", "Miss"].indexOf(title) !== -1;
 };
+
 const createUser = async function (req, res) {
   try {
     const userData = req.body;
@@ -29,106 +30,45 @@ const createUser = async function (req, res) {
 
     //********************* Validation *****************/
 
-    if (!isValidRequestBody(userData)) {
-      return res
-        .status(400)
-        .send({ status: false, message: "No input  by User ...." });
-    }
-    if (!isValid(title)) {
-      return res
-        .status(400)
-        .send({ status: false, message: "Title is required. " });
-    }
+    if (!isValidRequestBody(userData)) { return res.status(400).send({ status: false, message: "No input by User ...." });  }
+    if (!isValid(title)) {return res.status(400).send({ status: false, message: "Title is required. " }); }
 
-    if (!isValid(name)) {
-      return res
-        .status(400)
-        .send({ status: false, message: "Name  is required" });
-    }
-    if (!isValid(phone)) {
-      return res
-        .status(400)
-        .send({ status: false, message: "Name  is required" });
-    }
-    if (!isValid(name)) {
-      return res
-        .status(400)
-        .send({ status: false, message: "phone Number  is required" });
-    }
-    if (!isValid(email)) {
-      return res
-        .status(400)
-        .send({ status: false, message: "Email  is required" });
-    }
-    if (!isValid(password)) {
-      return res
-        .status(400)
-        .send({ status: false, message: "password  is required" });
-    }
-    if (!isValid(address)) {
-      return res
-        .status(400)
-        .send({ status: false, message: "Address  is required" });
-    }
+    if (!isValid(name)) {return res.status(400).send({ status: false, message: "Name  is required" });}
 
-    if (!pincodeRegex.test(address.pincode)) {
-      return res
-        .status(400)
-        .send({ status: false, message: "pincode  must be of 6 Digits" });
-    }
+    if (!isValid(phone)) {return res.status(400).send({ status: false, message: "Phone Number is required" }); }
+    
+   if (!isValid(email)) { return res.status(400).send({ status: false, message: "Email  is required" });}
+    
+   if (!isValid(password)) {return res.status(400).send({ status: false, message: "password  is required" }); }
 
-    if (!isvalidTitle(title)) {
-      return res
-        .status(400)
-        .send({ status: false, message: "Title shoud be among Mr,Mrs, Miss" });
-    }
+   if(address && (typeof address === 'object') && (address !== null)) {return res.status(400).send({status:false, message:"Enter the address in the object form"})}
+   
+    if (address && !isValid(address)) { return res.status(400).send({ status: false, message: "Address  is required" });}
 
-    if (!nameRegex.test(name)) {
-      return res.status(400).send({ status: false, message: "Not valid Name" });
-    }
-    if (!emailRegex.test(email)) {
-      return res.status(400).send({
-        status: false,
-        message: "please provide  a valid email Address.",
-      });
-    }
-    if (!mobileRegex.test(phone)) {
-      return res.status(400).send({
-        status: false,
-        message:
-          "please provide  a valid 10 digits phone number starts shoud be 6-9.",
-      });
-    }
-    if (!passwordRegex.test(password)) {
-      return res.status(400).send({
-        status: false,
-        message:
-          "please provide  a strong  enough.please provide a password of Min length of 8 char and Uppercase",
-      });
-    }
+    if (address && !pincodeRegex.test(address.pincode)) { return res.status(400).send({ status: false, message: "pincode  must be of 6 Digits" });}
+
+    if (!isvalidTitle(title)) { return res.status(400).send({ status: false, message: "Title shoud be among Mr,Mrs, Miss" }); }
+
+    if (!nameRegex.test(name)) { return res.status(400).send({ status: false, message: "Not valid Name" }); }
+    if (!emailRegex.test(email)) {return res.status(400).send({ status: false, message: "please provide a valid email Address." }); }
+    if (!mobileRegex.test(phone)) { return res.status(400).send({ status: false,  message: "please provide  a valid 10 digits phone number starts from 6-9."});}
+    if (!passwordRegex.test(password)) { return res.status(400).send({ status: false, message:"Use the strong password with min length 8 and max length 15. And password should include atleast one capital letter and one small letter" }); }
 
     const duplicateEmail = await UserModel.findOne({ email });
-    if (duplicateEmail)
-      return res.status(400).send({
-        status: false,
-        message: "Email address alerady exists . plz use another email address",
-      });
-
+    if (duplicateEmail){return res.status(400).send({ status: false, message: "Email address alerady exists. please use another email address"});}
+    
     const duplicatephone = await UserModel.findOne({ phone });
-    if (duplicatephone)
-      return res.status(400).send({
-        status: false,
-        message: "phone number alerady exists . plz use another phone number",
-      });
-
+    if (duplicatephone){return res.status(400).send({ status: false, message: "phone number alerady exists. please use another phone number"});}
+      
     let newUser = await UserModel.create(userData);
-    return res
-      .status(201)
-      .send({ status: true, msg: "succesfully run", userdata: newUser });
+    
+    return res.status(201).send({ status: true, msg: "Success", userdata: newUser });
   } catch (err) {
     res.status(500).send({ status: false, msg: err.message });
   }
 };
+
+// ///////////////////////////////[Login User]//////////////////////////////////////////////////////////////////////////
 
 const loginUser = async function (req, res) {
   try {
@@ -136,44 +76,24 @@ const loginUser = async function (req, res) {
     const { email, password } = loginData;
 
     if (!isValidRequestBody(loginData)) {
-      return res.status(400).send({
-        status: false,
-        message: "Invalid request, please enter your email and password",
-      });
-    }
+      return res.status(400).send({status: false, message: "Invalid request, please enter your email and password"});}
 
-    if (!isValid(email))
-      return res
-        .status(400)
-        .send({ status: false, message: "Email id required" });
+    if (!isValid(email))return res.status(400).send({ status: false, message: "Email id required" });
 
-    if (!isValid(password)) {
-      return res
-        .status(400)
-        .send({ status: false, message: "password must be present" });
-    }
+    if (!isValid(password)) {return res.status(400).send({ status: false, message: "password must be present" });}
 
     const user = await UserModel.findOne({ email: email, password: password });
 
-    if (!user) {
-      return res
-        .status(401)
-        .send({ status: false, msg: "Invalid credentials" });
-    }
-    let token = jwt.sign(
-      {
-        userId: user._id.toString(),
-        iat: Math.floor(Date.now() / 1000),
-        exp: Math.floor(Date.now() / 1000) + 10 * 60 * 60,
-      },
-      "Group33-book/Management"
-    );
-    res.setHeader("x-api-key", token);
-    res
-      .status(200)
-      .send({ status: true, msg: "User successfully logged In", data: token });
-  } catch (err) {
+    if (!user) {return res.status(401).send({ status: false, msg: "Invalid credentials" }); }
+    let token = jwt.sign({userId: user._id.toString(),iat: Math.floor(Date.now() / 1000) },"Group33-book/Management", {expiresIn: '15s'});
+     res.setHeader("x-api-key", token);
+    
+    res.status(200).send({ status: true, msg: "User successfully logged In", data: token });
+
+    } catch (err) {
     res.status(500).send({ status: false, msg: err.message });
   }
 };
-module.exports = { createUser, loginUser };
+module.exports = { createUser, loginUser }
+
+// Math.floor(Date.now() / 1000) + 10 * 60 * 60
