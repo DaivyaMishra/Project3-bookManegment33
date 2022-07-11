@@ -7,6 +7,8 @@ const tokenRegex = /^[A-Za-z0-9-=]+\.[A-Za-z0-9-=]+\.?[A-Za-z0-9-_.+/=]*$/;
 const isValidObjectId = function (ObjectId) {
   return mongoose.Types.ObjectId.isValid(ObjectId);
 };
+
+// ////////////////////////////////////////////[Authentication]///////////////////////////////////////////////////////
 const authentication = async function (req, res, next) {
   try {
     let token = req.headers["x-api-key"];
@@ -14,11 +16,12 @@ const authentication = async function (req, res, next) {
 
     if (!token) { return res.status(400).send({ status: false, msg: "Token must be presents" }) }
     if (!tokenRegex.test(token)) return res.send(400).send({ status: false, message: "Please provide a valid  token" })
-
+    
+    try{
     let decodedToken = jwt.verify(token, secretKey);
-   
-    if (!decodedToken) {return res.status(400).send({ status: false, msg: "Authentication failed" })}
-   
+    }catch(err){
+   return res.status(400).send({status:false, message:err.message})
+    }
     next();
 
   } catch (err) {
@@ -30,29 +33,24 @@ const authentication = async function (req, res, next) {
 
 const authorization = async function (req, res, next) {
   try {
-    let userId = req.userId;
-    let bookId = req.param.bookId;
+   let bookId = req.params.bookId;
 
-    decodedToken = req.decodedToken;
-console.log(decodedToken)
-    if (!isValidObjectId(bookId))
-      return res
-        .status(400)
-        .send({ status: false, message: "please provided valid book  id" });
+    let token = req.headers["x-api-key"]
+    let decodedToken = jwt.verify(token, "Group33-book/Management")
+    let decodedUser = decodedToken.userId
+    
+     if (!isValidObjectId(bookId)) return res.status(400).send({ status: false, message: "please provided valid book id" });
 
-    const findBook = await BookModel.find({ _id: bookId, isDeleted: false });
-    if (!findBook)
-      res
-        .status(404)
-        .send({ status: false, msg: "No book found or it may be deleted" });
+    const findBook = await BookModel.findOne({ _id: bookId, isDeleted: false });
+    if (!findBook) return res.status(404).send({ status: false, msg: "No book found or it may be deleted" });
+        
+    const user = findBook.userId.toString()
+     console.log(decodedUser)
+    console.log(user)
 
-    if (decodedToken.userId != findBook.userId) {
-      next();
-    } else {
-      res.status(401).send({
-        status: false,
-        msg: "user logged is not  allows or modify or assess the author Data",
-      });
+    if (decodedUser == user) { next() }
+    else {
+      res.status(401).send({ status: false, message: "You are not authorised to perform this action" })
     }
   } catch (err) {
     res.status(500).send({ msg: "Error", error: err.message });

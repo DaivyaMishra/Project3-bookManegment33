@@ -41,7 +41,7 @@ const createUser = async function (req, res) {
     
    if (!isValid(password)) {return res.status(400).send({ status: false, message: "password  is required" }); }
 
-   if(address && (typeof address === 'object') && (address !== null)) {return res.status(400).send({status:false, message:"Enter the address in the object form"})}
+  //  if(address && (typeof address === 'object') && (address !== null)) {return res.status(400).send({status:false, message:"Enter the address in the object form"})}
    
     if (address && !isValid(address)) { return res.status(400).send({ status: false, message: "Address  is required" });}
 
@@ -62,7 +62,7 @@ const createUser = async function (req, res) {
       
     let newUser = await UserModel.create(userData);
     
-    return res.status(201).send({ status: true, msg: "Success", userdata: newUser });
+    return res.status(201).send({ status: true, message: 'Success', data: newUser });
   } catch (err) {
     res.status(500).send({ status: false, msg: err.message });
   }
@@ -85,7 +85,7 @@ const loginUser = async function (req, res) {
     const user = await UserModel.findOne({ email: email, password: password });
 
     if (!user) {return res.status(401).send({ status: false, msg: "Invalid credentials" }); }
-    let token = jwt.sign({userId: user._id.toString(),iat: Math.floor(Date.now() / 1000) },"Group33-book/Management", {expiresIn: '15s'});
+    let token = jwt.sign({userId: user._id.toString(),iat: Math.floor(Date.now() / 1000) },"Group33-book/Management", {expiresIn: '1h'});
      res.setHeader("x-api-key", token);
     
     res.status(200).send({ status: true, msg: "User successfully logged In", data: token });
