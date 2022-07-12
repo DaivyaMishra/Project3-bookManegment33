@@ -136,14 +136,17 @@ const updateBooks = async function (req, res){
   if(getbook == null ) {return res.status(404).send({ status: false, message: "No data found"}) }
 
 const isDuplicateTitle = await BookModel.findOne({title:title})
-if(title && (!isValid(title) || (!titleRegex.test(title)) )) {return res.status(400).send({status:false, message:"Enter the valid title"}) }
+if(title && (!isValid(title) )) {return res.status(400).send({status:false, message:"Enter the valid title"})}
+if(title && !titleRegex.test(title)) {return res.status(400).send({status:false, message:"Enter the valid title"}) }
 if(title && isDuplicateTitle ) {return res.status(400).send({status:false, message:`title ${title} already exists`})}
 
 const isDuplicateISBN = await BookModel.findOne({ISBN:ISBN}) 
 if(ISBN && (!ISBNRegex.test(ISBN)) ){return res.status(400).send({status:false, message:"Enter the valid ISBN"})}
 if(ISBN && isDuplicateISBN) {return res.status(400).send({status:false, message:`ISBN ${ISBN} already exists`})}
     
-if(excerpt && ((!isValid(excerpt)) || excerptRegex.test(excerpt)) ) { return res.status(400).send({status:false, message:"Enter the valid excerpt"})}
+if(excerpt && (!isValid(excerpt)) ) {return res.status(400).send({status:false, message:"Enter the valid excerpt"})}
+
+if(excerpt && excerptRegex.test(excerpt))  { return res.status(400).send({status:false, message:"Enter the valid excerpt"})}
 
 if(releasedAt && (!dateRegex.test(releasedAt)) ) {return res.status(400).send({status:false, message:"Enter the date in the valid format YY-MM-DD"})}
 

@@ -43,15 +43,17 @@ const authorization = async function (req, res, next) {
      if (!isValidObjectId(bookId)) return res.status(400).send({ status: false, message: "please provided valid book id" });
 
     const findBook = await BookModel.findOne({ _id: bookId, isDeleted: false });
+
     if (!findBook) return res.status(404).send({ status: false, msg: "No book found or it may be deleted" });
         
     const user = findBook.userId.toString()
-     console.log(decodedUser)
+    
+    console.log(decodedUser)
     console.log(user)
 
     if (decodedUser == user) { next() }
     else {
-      res.status(401).send({ status: false, message: "You are not authorised to perform this action" })
+      res.status(403).send({ status: false, message: "You are not authorised to perform this action" })
     }
   } catch (err) {
     res.status(500).send({ msg: "Error", error: err.message });

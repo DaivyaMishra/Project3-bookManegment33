@@ -101,6 +101,7 @@ if(review &&  !reviewRegex.test(review))   {return res.status(400).send({ status
 if(rating &&  !ratingRegex.test(rating))   {return res.status(400).send({ status: false, message: "Enter the valid rating which is between 1 to 5" })}
 
 const getId = checkreview.bookId 
+
 if(bookId != getId)  return res.status(404).send({status:false, Message:"bookId not match invalid book id"})
 
 const UpdateReview = await reviewModel.findByIdAndUpdate({_id:reviewId}, {$set:{ review :review, rating: rating, reviewedBy:reviewedBy }}, {new:true})
