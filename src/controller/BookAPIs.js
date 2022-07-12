@@ -38,7 +38,7 @@ const createBook = async function (req, res) {
     
     if (!isValidObjectId(userId))return res.status(400).send({ status: false, message: "Please provide valid user Id" });
    
-    if(userId != validUser) {return res.status(400).send({status:false, message:"unauthorised access"})}
+    if(userId != validUser) {return res.status(401).send({status:false, message:"unauthorised access"})}
 
     if (!isValid(title))return res.status(400).send({ status: false, message: "Title is required." });
 

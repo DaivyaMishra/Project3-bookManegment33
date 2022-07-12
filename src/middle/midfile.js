@@ -53,7 +53,7 @@ const authorization = async function (req, res, next) {
 
     if (decodedUser == user) { next() }
     else {
-      res.status(403).send({ status: false, message: "You are not authorised to perform this action" })
+      res.status(401).send({ status: false, message: "You are not authorised to perform this action" })
     }
   } catch (err) {
     res.status(500).send({ msg: "Error", error: err.message });
