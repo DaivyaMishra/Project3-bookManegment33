@@ -102,7 +102,7 @@ if(rating &&  !ratingRegex.test(rating))   {return res.status(400).send({ status
 
 const getId = checkreview.bookId 
 
-if(bookId != getId)  return res.status(404).send({status:false, Message:"bookId not match invalid book id"})
+if(bookId != getId)  return res.status(404).send({status:false, Message:"bookId doesn't matches with the bookId in the review document "})
 
 const UpdateReview = await reviewModel.findByIdAndUpdate({_id:reviewId}, {$set:{ review :review, rating: rating, reviewedBy:reviewedBy }}, {new:true})
 res.status(200).send({status:true, message:"updated review data successfully", data:isbookId,UpdateReview  })
@@ -126,14 +126,14 @@ const reviewId = req.params.reviewId
 if(!isValidObjectId(reviewId)) return res.status(400).send({status:false, message:"Enter the valid review Id"})
 
 const isbookId = await BookModel.findOne({isDeleted: false, _id: bookId})
-if(!isbookId) return res.status(404).send({status:false, Message:"No data found or may be deleted"})
+if(!isbookId) return res.status(404).send({status:false, Message:"No book data found or may be deleted"})
 
 const checkreview = await reviewModel.findOne({isDeleted: false, _id: reviewId})
 if(!checkreview) return res.status(404).send({status:false, Message:"No review data found or may be deleted"})
 
 const getId = checkreview.bookId 
 
-if(bookId != getId)  return res.status(404).send({status:false, Message:"bookId not match invalid book id"})
+if(bookId != getId)  return res.status(404).send({status:false, Message:"bookId doesn't matches with the bookId in the review document"})
 
 const decount = await BookModel.findOneAndUpdate({_id:bookId, isDeleted:false},{$inc:{reviews:-1}},{new:true} )
 

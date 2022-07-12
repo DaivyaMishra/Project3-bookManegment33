@@ -128,12 +128,12 @@ const updateBooks = async function (req, res){
     let  reqbody = req.body 
     let {title, excerpt, ISBN, releasedAt } = reqbody
 
-  if(!isValidObjectId(bookId)){ return res.status(400).send({ status: false, message: "Enter the valid Book Id"});}
+if(!isValidObjectId(bookId)){ return res.status(400).send({ status: false, message: "Enter the valid Book Id"});}
 
-  if(!isValidRequestBody(reqbody)){return res.status(400).send({ status: false, message: "Enter the details(title,excerpt,release date,ISBN)that you would like to update"})}
+if(!isValidRequestBody(reqbody)){return res.status(400).send({ status: false, message: "Enter the details(title,excerpt,release date,ISBN)that you would like to update"})}
     
-  const getbook = await BookModel.findOne({_id:bookId, isDeleted:false})
-  if(getbook == null ) {return res.status(404).send({ status: false, message: "No data found"}) }
+const getbook = await BookModel.findOne({_id:bookId, isDeleted:false})
+if(getbook == null ) {return res.status(404).send({ status: false, message: "No data found"}) }
 
 const isDuplicateTitle = await BookModel.findOne({title:title})
 if(title && (!isValid(title) )) {return res.status(400).send({status:false, message:"Enter the valid title"})}
@@ -145,7 +145,6 @@ if(ISBN && (!ISBNRegex.test(ISBN)) ){return res.status(400).send({status:false, 
 if(ISBN && isDuplicateISBN) {return res.status(400).send({status:false, message:`ISBN ${ISBN} already exists`})}
     
 if(excerpt && (!isValid(excerpt)) ) {return res.status(400).send({status:false, message:"Enter the valid excerpt"})}
-
 if(excerpt && excerptRegex.test(excerpt))  { return res.status(400).send({status:false, message:"Enter the valid excerpt"})}
 
 if(releasedAt && (!dateRegex.test(releasedAt)) ) {return res.status(400).send({status:false, message:"Enter the date in the valid format YY-MM-DD"})}
