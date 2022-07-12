@@ -11,7 +11,7 @@ router.post("/register", UserAPIs.createUser);
 router.post("/login", UserAPIs.loginUser);
 
 // Book API's
-router.post("/books",middleware.authentication, middleware.authorization, BookAPIs.createBook);
+router.post("/books",middleware.authentication, BookAPIs.createBook);
 router.get("/books", middleware.authentication, BookAPIs.getBooksByQuery);
 router.get("/books/:bookId",middleware.authentication, BookAPIs.getBooksById);
 

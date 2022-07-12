@@ -27,14 +27,15 @@ const dateRegex = /^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/
 // ///////////////////////////////[Create Review]////////////////////////////////////////////////////////////
 
 const createReview = async function (req, res) {
+  try{
    const data = req.body;
   const bookId = req.params.bookId;
   const { review, rating, reviewedBy, isDeleted, reviewedAt } = data;
 
   if (!valid(bookId) || !isValidObjectId(bookId)) {return res.status(400).send({ status: false, message: "Enter the correct bookId" })}
-  if (!ObjectIdRegex.test(bookId)) {return res.status(400).send({ status: false, message: "Enter the valid Book Id" })}
+  // if (!ObjectIdRegex.test(bookId)) {return res.status(400).send({ status: false, message: "Enter the valid Book Id" })}
 
-  const isValidbookId = await BookModel.findOne({isDeleted: false,_id: bookId});
+  const isValidbookId = await BookModel.findOne({isDeleted: false, _id: bookId});
   
   if (isValidbookId === null) {return res.status(404).send({ status: false, message: "No such book exists" })}
 
@@ -63,6 +64,7 @@ const createReview = async function (req, res) {
   const newReview = await reviewModel.create(dataTobeAdded)
 
   res.status(201).send({ status: true, message: "Success", data: updatereview, newReview  })
+  }catch(err) { res.status(500).send({ status: false, message: "Error", error: err.message }) }
  }
 
 //////////////////////////////////[Update Review]////////////////////////////////////////////////////////////////////
@@ -129,6 +131,7 @@ const checkreview = await reviewModel.findOne({isDeleted: false, _id: reviewId})
 if(!checkreview) return res.status(404).send({status:false, Message:"No review data found or may be deleted"})
 
 const getId = checkreview.bookId 
+
 if(bookId != getId)  return res.status(404).send({status:false, Message:"bookId not match invalid book id"})
 
 const decount = await BookModel.findOneAndUpdate({_id:bookId, isDeleted:false},{$inc:{reviews:-1}},{new:true} )

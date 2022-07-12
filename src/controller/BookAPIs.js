@@ -3,6 +3,8 @@ const BookModel = require("../models/BookModel");
 const UserModel = require("../models/UserModel");
 const reviewModel = require("../models/reviewModel");
 const { exists } = require("../models/BookModel");
+const jwt = require("jsonwebtoken");
+
 
 const isValid = function (value) {
   if (typeof value === "undefined" || value === null) return false;
@@ -28,19 +30,21 @@ const ISBNRegex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/;
 const createBook = async function (req, res) {
   try {
     let bookData = req.body;
-  //  let validUser = req.decodedToken.userId
+  let validUser = req.decodedToken.userId
    
     let { title, excerpt, userId, ISBN, category, subcategory, isDeleted } = bookData;
- 
+      
     if (!isValidRequestBody(bookData))return res.status(400).send({ status: false, message: "No input by user.." });
+    
+    if (!isValidObjectId(userId))return res.status(400).send({ status: false, message: "Please provide valid user Id" });
+   
+    if(userId != validUser) {return res.status(400).send({status:false, message:"unauthorised access"})}
 
     if (!isValid(title))return res.status(400).send({ status: false, message: "Title is required." });
 
     if (!isValid(excerpt))return res.status(400).send({ status: false, message: "Excerpt required." });
 
     if (!isValid(userId))return res.status(400).send({ status: false, message: "User Id is required." });
-
-        // if(bookData.userId != validUser) {return res.status(400).send({status:false, message:"unauthorised access"})}
 
     if (!isValid(ISBN))return res.status(400).send({ status: false, message: "ISBN number is required." });
 
@@ -51,8 +55,6 @@ const createBook = async function (req, res) {
     if (!titleRegex.test(title))return res.status(400).send({status: false,message: " Please provide valid title including characters only."});
 
     if (!ISBNRegex.test(ISBN))return res.status(400).send({status: false, message: " Please provide valid ISBN of 13 digits."});
-
-    if (!isValidObjectId(userId))return res.status(400).send({ status: false, message: "Please provide valid user Id" });
 
     const findUser = await UserModel.findOne({ _id: userId });
 
@@ -83,7 +85,6 @@ const getBooksByQuery = async function (req, res) {
 
     if (isValid(userId) && isValidObjectId(userId)) { filter["userId"] = userId }
    
-
     if (isValid(category)) { filter["category"] = category }
 
     if (isValid(subcategory)) { filter["subcategory"] = subcategory }
@@ -127,12 +128,12 @@ const updateBooks = async function (req, res){
     let  reqbody = req.body 
     let {title, excerpt, ISBN, releasedAt } = reqbody
 
-    if(!isValidObjectId(bookId)){ return res.status(400).send({ status: false, message: "Enter the valid Book Id"});}
+  if(!isValidObjectId(bookId)){ return res.status(400).send({ status: false, message: "Enter the valid Book Id"});}
 
-    if(!isValidRequestBody(reqbody)){return res.status(400).send({ status: false, message: "Enter the details(title,excerpt,release date,ISBN)that you would like to update"})}
+  if(!isValidRequestBody(reqbody)){return res.status(400).send({ status: false, message: "Enter the details(title,excerpt,release date,ISBN)that you would like to update"})}
     
-    const getbook = await BookModel.findOne({_id:bookId, isDeleted:false})
-    if(getbook == null ) {return res.status(404).send({ status: false, message: "No data found"}) }
+  const getbook = await BookModel.findOne({_id:bookId, isDeleted:false})
+  if(getbook == null ) {return res.status(404).send({ status: false, message: "No data found"}) }
 
 const isDuplicateTitle = await BookModel.findOne({title:title})
 if(title && (!isValid(title) || (!titleRegex.test(title)) )) {return res.status(400).send({status:false, message:"Enter the valid title"}) }

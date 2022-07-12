@@ -19,6 +19,7 @@ const authentication = async function (req, res, next) {
     
     try{
     let decodedToken = jwt.verify(token, secretKey);
+    req.decodedToken = decodedToken
     }catch(err){
    return res.status(400).send({status:false, message:err.message})
     }

@@ -23,14 +23,14 @@ const isvalidTitle = function (title) {
   return ["Mr", "Mrs", "Miss"].indexOf(title) !== -1;
 };
 
+// //////////////////////////////////////[Create User]////////////////////////////////////////////////////////////////////
 const createUser = async function (req, res) {
   try {
     const userData = req.body;
     let { title, name, phone, email, password, address } = userData;
 
-    //********************* Validation *****************/
-
     if (!isValidRequestBody(userData)) { return res.status(400).send({ status: false, message: "No input by User ...." });  }
+   
     if (!isValid(title)) {return res.status(400).send({ status: false, message: "Title is required. " }); }
 
     if (!isValid(name)) {return res.status(400).send({ status: false, message: "Name  is required" });}
@@ -43,8 +43,10 @@ const createUser = async function (req, res) {
 
   //  if(address && (typeof address === 'object') && (address !== null)) {return res.status(400).send({status:false, message:"Enter the address in the object form"})}
    
-    if (address && !isValid(address)) { return res.status(400).send({ status: false, message: "Address  is required" });}
-
+    if (address){
+     if(typeof address != 'object') { return res.status(400).send({ status: false, message: "Address  is required in the object form" })}
+    }
+    
     if (address && !pincodeRegex.test(address.pincode)) { return res.status(400).send({ status: false, message: "pincode  must be of 6 Digits" });}
 
     if (!isvalidTitle(title)) { return res.status(400).send({ status: false, message: "Title shoud be among Mr,Mrs, Miss" }); }
