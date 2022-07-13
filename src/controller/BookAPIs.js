@@ -55,6 +55,7 @@ const createBook = async function (req, res) {
     if (!titleRegex.test(title))return res.status(400).send({status: false,message: " Please provide valid title including characters only."});
 
     if (!ISBNRegex.test(ISBN))return res.status(400).send({status: false, message: " Please provide valid ISBN of 13 digits."});
+    if (!isValid(releasedAt)) return res.status(400).send({ status: false, message: "please provide released date" });
 
     const findUser = await UserModel.findOne({ _id: userId });
 
